@@ -6,5 +6,8 @@ export const PATH = {
   CART: '/cart',
   CHECKOUT: '/checkout',
   CHECKOUT_SUCCESS: '/checkout/success',
-  MY_ORDERS: '/my-orders',
+  MY_ORDERS: '/profile/my-orders',
+  DELIVERY: '/profile/delivery',
+
+  PROFILE: '/profile',
 };

@@ -1,12 +1,11 @@
 'use client';
+
 import {
   InfiniteButton,
   StoreCard,
-  StoreError,
   StoreList,
-  StoreNotFound,
 } from '@/components/container/card-store';
-import Spin from '@/components/container/spin';
+import { Spin } from '@/components/container/spin';
 import {
   ContainerWrapper,
   SectionContent,
@@ -32,30 +31,34 @@ import { FILTER_OPTIONS } from '@/constants';
 import { useCategoryFilter, useRestaurant } from '@/hooks';
 import { ListFilter } from 'lucide-react';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
+import { GetRestaurantParams } from '@/types';
+import { STATE_CONFIG } from '@/constants/state.constants';
+import { State } from '@/components/container/state';
 
-const CategoryPage = () => {
-  const {
-    filter,
-    handleDistanceChange,
-    handleRatingChange,
-    localPriceMax,
-    setLocalPriceMax,
-    setLocalPriceMin,
-    localPriceMin,
-  } = useCategoryFilter();
-  const {
-    error,
-    handleLoadMore,
-    handlePrefetchRestaurant,
-    hasNextPage,
-    isFetchingNextPage,
-    isLoading,
-    restaurants,
-  } = useRestaurant({ filter });
+interface FilterContentProps {
+  idPrefix?: string;
+  filter: Pick<GetRestaurantParams, 'range' | 'rating'>;
+  localPriceMin: string;
+  localPriceMax: string;
+  handleDistanceChange: (value: number, checked: boolean) => void;
+  handleRatingChange: (value: number, checked: boolean) => void;
+  setLocalPriceMin: (value: string) => void;
+  setLocalPriceMax: (value: string) => void;
+}
 
+const FilterContent = ({
+  idPrefix,
+  filter,
+  localPriceMin,
+  localPriceMax,
+  handleDistanceChange,
+  handleRatingChange,
+  setLocalPriceMin,
+  setLocalPriceMax,
+}: FilterContentProps) => {
   const { distances, prices, ratings } = FILTER_OPTIONS;
 
-  const FilterContent = ({ idPrefix }: { idPrefix?: string }) => (
+  return (
     <Filter>
       <FilterSection>
         <FilterTitle className='font-bold'>Filter</FilterTitle>
@@ -72,6 +75,7 @@ const CategoryPage = () => {
           />
         ))}
       </FilterSection>
+
       <FilterSection title='Price'>
         {prices.map((price) => (
           <FilterInputPrice
@@ -89,6 +93,7 @@ const CategoryPage = () => {
           />
         ))}
       </FilterSection>
+
       <FilterSection title='Rating'>
         {ratings.map((rating) => (
           <FilterCheckboxRating
@@ -102,13 +107,45 @@ const CategoryPage = () => {
       </FilterSection>
     </Filter>
   );
+};
+
+const CategoryPage = () => {
+  const {
+    filter,
+    handleDistanceChange,
+    handleRatingChange,
+    localPriceMax,
+    setLocalPriceMax,
+    setLocalPriceMin,
+    localPriceMin,
+  } = useCategoryFilter();
+
+  const {
+    error,
+    handleLoadMore,
+    handlePrefetchRestaurant,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    restaurants,
+    restaurantQuery,
+  } = useRestaurant({ filter });
 
   return (
     <ContainerWrapper>
       <SectionWrapper title='All Restaurant'>
         <SectionContent className='w-full md:flex-start items-start!'>
           <Card className='hidden md:block w-full max-w-[266px]'>
-            <FilterContent idPrefix='desktop-' />
+            <FilterContent
+              idPrefix='desktop'
+              filter={filter}
+              localPriceMin={localPriceMin}
+              localPriceMax={localPriceMax}
+              handleDistanceChange={handleDistanceChange}
+              handleRatingChange={handleRatingChange}
+              setLocalPriceMin={setLocalPriceMin}
+              setLocalPriceMax={setLocalPriceMax}
+            />
           </Card>
 
           <div className='md:hidden w-full'>
@@ -126,20 +163,33 @@ const CategoryPage = () => {
                 <VisuallyHidden>
                   <SheetTitle>filter store</SheetTitle>
                 </VisuallyHidden>
-                <FilterContent idPrefix='mobile-' />
+                <FilterContent
+                  idPrefix='mobile'
+                  filter={filter}
+                  localPriceMin={localPriceMin}
+                  localPriceMax={localPriceMax}
+                  handleDistanceChange={handleDistanceChange}
+                  handleRatingChange={handleRatingChange}
+                  setLocalPriceMin={setLocalPriceMin}
+                  setLocalPriceMax={setLocalPriceMax}
+                />
               </SheetContent>
             </Sheet>
           </div>
 
           <div className='w-full'>
             {isLoading && <Spin />}
-            {error && <StoreError />}
-            {!isLoading && !error && restaurants.length === 0 && (
-              <StoreNotFound />
+            {error && (
+              <State
+                {...STATE_CONFIG.store.error}
+                onAction={() => restaurantQuery.refetch()}
+              />
             )}
-            {!isLoading &&
-              !error &&
-              restaurants.length > 0 && [
+            {!isLoading && !error && restaurants.length === 0 && (
+              <State {...STATE_CONFIG.store.empty} />
+            )}
+            {!isLoading && !error && restaurants.length > 0 && (
+              <>
                 <StoreList
                   key='store-list'
                   className='w-full md:grid-cols-1 lg:grid-cols-2'
@@ -151,7 +201,7 @@ const CategoryPage = () => {
                       onPrefetch={handlePrefetchRestaurant}
                     />
                   ))}
-                </StoreList>,
+                </StoreList>
                 <InfiniteButton
                   key='infinite-btn'
                   className='w-full md:w-fit'
@@ -160,8 +210,9 @@ const CategoryPage = () => {
                   hasNextPage={hasNextPage}
                 >
                   {isFetchingNextPage ? 'Loading...' : 'Show More'}
-                </InfiniteButton>,
-              ]}
+                </InfiniteButton>
+              </>
+            )}
           </div>
         </SectionContent>
       </SectionWrapper>

@@ -20,8 +20,10 @@ import { cn } from '@/lib/utils';
 import { Menu } from 'lucide-react';
 import { Avatar } from '../avatar';
 import { useHeaderScroll } from './use-header-scroll';
+import { useLogout } from '@/hooks';
 
 const Header = () => {
+  const logout = useLogout();
   const router = useRouter();
   const pathname = usePathname();
   const isHome = pathname.includes(PATH.HOME);
@@ -36,7 +38,7 @@ const Header = () => {
   return (
     <header
       className={cn(
-        'fixed top-0 left-0 right-0 z-50 transition-all duration-600',
+        'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
         isScrolled ? 'bg-white shadow-card' : 'bg-transparent'
       )}
     >
@@ -67,20 +69,37 @@ const Header = () => {
 
                   <p className={cn('text-md-bold')}>{user.name}</p>
                 </DropdownMenuItem>
-                {PROFILE_MENU.map((menu) => (
-                  <DropdownMenuItem
-                    key={menu.href}
-                    className={cn(
-                      'group flex-start gap-2 px-3 py-2 w-56 rounded-md',
-                      menu.className
-                    )}
-                  >
-                    <menu.icon
-                      className={cn('group-hover:stroke-white', menu.className)}
-                    />
-                    <span className='group-hover:text-white'>{menu.label}</span>
-                  </DropdownMenuItem>
-                ))}
+                {PROFILE_MENU.map((menu) => {
+                  const isActive = pathname === menu.href;
+
+                  return (
+                    <DropdownMenuItem
+                      key={menu.href}
+                      className={cn(
+                        'group flex-start gap-2 px-3 py-2 w-56 rounded-md transition-colors cursor-pointer',
+                        isActive
+                          ? 'text-primary-100'
+                          : 'text-neutral-950 hover:bg-primary-100 hover:text-white'
+                      )}
+                      onClick={() => {
+                        if (menu.label === 'Logout') return logout();
+                        router.push(menu.href);
+                      }}
+                    >
+                      <menu.icon
+                        className={cn(
+                          'transition-colors',
+                          isActive
+                            ? 'stroke-primary-100'
+                            : 'stroke-neutral-950 group-hover:stroke-white'
+                        )}
+                      />
+                      <span className='transition-colors text-md-regular'>
+                        {menu.label}
+                      </span>
+                    </DropdownMenuItem>
+                  );
+                })}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>

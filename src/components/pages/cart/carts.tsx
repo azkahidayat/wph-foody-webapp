@@ -4,9 +4,9 @@ import { Card, CardContent } from '@/components/ui/card';
 import { useCartActions } from '@/hooks';
 import { cn, formatMoney } from '@/lib/utils';
 import { CartItem as CartItemType, CartRestaurant } from '@/types';
-import { ChevronRight, Minus, Plus } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import Image from 'next/image';
-import React, { useCallback } from 'react';
+import React from 'react';
 
 export const Carts = ({ className, ...props }: React.ComponentProps<'div'>) => (
   <div className={cn('space-y-5', className)} {...props} />
@@ -123,5 +123,77 @@ export const CartItemSummary = ({
     <Button onClick={handleClick} className='w-full md:max-w-60 h-12'>
       Checkout
     </Button>
+  </div>
+);
+
+export const CartItemOrderId = ({
+  transactionId,
+}: {
+  transactionId: string;
+}) => (
+  <div className='mb-4 pb-3 border-b border-neutral-200'>
+    <p className='text-sm text-neutral-600'>Order ID: {transactionId}</p>
+  </div>
+);
+
+export const CartItemOrderMenu = ({
+  item,
+}: {
+  item: {
+    menuId: number;
+    image: string;
+    menuName: string;
+    quantity: number;
+    price: number;
+  };
+}) => (
+  <div className='flex gap-4'>
+    <div className='relative overflow-hidden aspect-square size-16 md:size-20 rounded-xl shrink-0'>
+      <Image
+        fill
+        loading='lazy'
+        sizes='(max-width: 768px) 64px, 80px'
+        src={item.image}
+        alt={item.menuName}
+        className='object-cover'
+      />
+    </div>
+
+    <div className='flex-1 min-w-0'>
+      <p className='desc text-neutral-600 mb-1'>{item.menuName}</p>
+      <h4 className='text-md-extrabold md:text-lg-extrabold'>
+        {item.quantity}x {formatMoney(item.price)}
+      </h4>
+    </div>
+  </div>
+);
+
+export const OrderSummary = ({
+  className,
+  ...props
+}: React.ComponentProps<'div'>) => (
+  <div
+    className={cn(
+      'bg-neutral-50 rounded-lg px-2 py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3',
+      className
+    )}
+    {...props}
+  />
+);
+
+export const OrderSummaryInfo = ({
+  restaurantName,
+  subtotal,
+}: {
+  restaurantName: string;
+  subtotal: number;
+}) => (
+  <div className='flex-1'>
+    <p className='text-sm text-neutral-600 mb-1'>
+      Subtotal from {restaurantName}
+    </p>
+    <h4 className='text-lg-extrabold md:text-xl-extrabold'>
+      {formatMoney(subtotal)}
+    </h4>
   </div>
 );

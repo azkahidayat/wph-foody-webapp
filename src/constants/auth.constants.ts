@@ -1,3 +1,4 @@
+import { UpdateProfileReq } from '@/lib/schema';
 import { FieldConfig } from '@/types';
 
 export type AuthSectionProps = {
@@ -70,14 +71,14 @@ export const signUpFields: FieldConfig[] = [
     name: 'password',
     type: 'password',
     label: 'Password',
-    // autoComplete: 'new-password',
+    autoComplete: 'new-password',
     showToggle: true,
   },
   {
     name: 'confirm-password',
     type: 'password',
     label: 'Confirm Password',
-    // autoComplete: 'new-password',
+    autoComplete: 'confirm-new-password',
     showToggle: true,
   },
 ];
@@ -85,4 +86,28 @@ export const signUpFields: FieldConfig[] = [
 export const authFieldConfig = [
   { id: 'sign-in', field: signInFields },
   { id: 'sign-up', field: signUpFields },
+];
+
+export const profileFormConfig: FieldConfig<UpdateProfileReq>[] = [
+  {
+    name: 'name',
+    type: 'text',
+    label: 'Full Name',
+    placeholder: 'Enter your full name',
+    autoComplete: 'name',
+  },
+  {
+    name: 'email',
+    type: 'email',
+    label: 'Email Address',
+    placeholder: 'Enter your email',
+    autoComplete: 'email',
+  },
+  {
+    name: 'phone',
+    type: 'tel',
+    label: 'Phone Number',
+    placeholder: 'Enter your phone number',
+    autoComplete: 'tel',
+  },
 ];

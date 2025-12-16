@@ -8,20 +8,6 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { ComponentProps } from 'react';
 
-export const StoreError = () => (
-  <div className='flex-center py-12'>
-    <p className='text-lg text-primary-100'>
-      Failed to load restaurants. Please try again.
-    </p>
-  </div>
-);
-
-export const StoreNotFound = () => (
-  <div className='flex-center py-12 w-full'>
-    <p className='text-lg text-neutral-500'>No restaurants found.</p>
-  </div>
-);
-
 export const StoreList = ({ className, ...props }: ComponentProps<'div'>) => {
   return (
     <div
@@ -75,7 +61,9 @@ export const StoreCard = ({
   onPrefetch?: (id: number) => void;
 } & React.ComponentProps<'div'>) => {
   // mock distance, no in api
-  const distance = (Math.random() * 9 + 1).toFixed(1);
+  // mock distance, no in api
+  const [distance] = React.useState(() => (Math.random() * 9 + 1).toFixed(1));
+
   const router = useRouter();
 
   const handleHover = React.useCallback(() => {

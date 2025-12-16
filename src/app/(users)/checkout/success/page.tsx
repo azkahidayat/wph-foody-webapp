@@ -55,15 +55,15 @@ const useCheckoutSuccess = () => {
   const checkout = useAppSelector((state: RootState) => state.cart.checkout);
   const router = useRouter();
 
-  const deliveryFee = React.useMemo(
-    () => generateRandomFee(10_000, 50_000),
-    [checkout?.totalPrice]
-  );
+  const deliveryFee = React.useMemo(() => {
+    if (!checkout?.totalPrice) return 0;
+    return generateRandomFee(10_000, 50_000);
+  }, [checkout?.totalPrice]);
 
-  const serviceFee = React.useMemo(
-    () => generateRandomFee(1_000, 10_000),
-    [checkout?.totalPrice]
-  );
+  const serviceFee = React.useMemo(() => {
+    if (!checkout?.totalPrice) return 0;
+    return generateRandomFee(1_000, 10_000);
+  }, [checkout?.totalPrice]);
 
   const checkoutSummary: SummaryItem[] = React.useMemo(() => {
     if (!checkout) return [];
@@ -123,7 +123,7 @@ const CheckoutSuccess = () => {
 
   return (
     <div className='min-h-screen min-w-screen bg-neutral-50 flex justify-center'>
-      <div className='w-full max-w-[430px] px-6 py-7 flex-col-center gap-5'>
+      <div className='w-full max-w-[500px] px-6 py-7 flex-col-center gap-5'>
         <div className='relative overflow-hidden w-[149px] h-[42px]'>
           <Image src={IMAGES.LOGO} alt='logo' fill className='object-cover' />
         </div>
