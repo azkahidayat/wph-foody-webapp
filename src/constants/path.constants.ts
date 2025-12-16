@@ -3,4 +3,8 @@ export const PATH = {
   HOME: '/home',
   CATEGORY: '/category',
   RESTAURANT: '/restaurant',
+  CART: '/cart',
+  CHECKOUT: '/checkout',
+  CHECKOUT_SUCCESS: '/checkout/success',
+  MY_ORDERS: '/my-orders',
 };
